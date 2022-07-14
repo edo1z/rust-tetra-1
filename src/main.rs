@@ -5,6 +5,7 @@ use tetra::{Context, ContextBuilder, State};
 
 const WINDOW_WIDTH: f32 = 640.0;
 const WINDOW_HEIGHT: f32 = 480.0;
+const PADDLE_SPEED: f32 = 8.0;
 
 struct GameState {
     paddle_texture: Texture,
@@ -26,6 +27,15 @@ impl State for GameState {
     fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
         graphics::clear(ctx, Color::rgb(0.392, 0.584, 0.929));
         self.paddle_texture.draw(ctx, self.paddle_position);
+        Ok(())
+    }
+    fn update(&mut self, ctx: &mut Context) -> tetra::Result {
+        if input::is_key_down(ctx, Key::W) {
+            self.paddle_position.y -= PADDLE_SPEED;
+        }
+        if input::is_key_down(ctx, Key::S) {
+            self.paddle_position.y += PADDLE_SPEED;
+        }
         Ok(())
     }
 }
