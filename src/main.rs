@@ -8,18 +8,24 @@ const WINDOW_HEIGHT: f32 = 480.0;
 
 struct GameState {
     paddle_texture: Texture,
+    paddle_position: Vec2<f32>,
 }
 impl GameState {
     fn new(ctx: &mut Context) -> tetra::Result<GameState> {
         let paddle_texture = Texture::new(ctx, "./resources/player1.png")?;
-        Ok(GameState { paddle_texture })
+        let paddle_position =
+            Vec2::new(16.0, (WINDOW_HEIGHT - paddle_texture.height() as f32) / 2.0);
+        Ok(GameState {
+            paddle_texture,
+            paddle_position,
+        })
     }
 }
 
 impl State for GameState {
     fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
         graphics::clear(ctx, Color::rgb(0.392, 0.584, 0.929));
-        self.paddle_texture.draw(ctx, Vec2::new(16.0, 16.0));
+        self.paddle_texture.draw(ctx, self.paddle_position);
         Ok(())
     }
 }
