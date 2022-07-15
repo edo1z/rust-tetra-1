@@ -1,6 +1,7 @@
-use tetra::graphics::{self, Color, Texture};
+use tetra::graphics::{self, Color, Rectangle, Texture};
 use tetra::input::{self, Key};
 use tetra::math::Vec2;
+use tetra::window;
 use tetra::{Context, ContextBuilder, State};
 
 const WINDOW_WIDTH: f32 = 640.0;
@@ -10,6 +11,7 @@ const PADDLE_SPEED: f32 = 8.0;
 struct GameState {
     player1: Entity,
     player2: Entity,
+    ball: Entity,
 }
 impl GameState {
     fn new(ctx: &mut Context) -> tetra::Result<GameState> {
@@ -23,9 +25,15 @@ impl GameState {
             WINDOW_WIDTH - player2_texture.width() as f32 - 16.0,
             (WINDOW_HEIGHT - player1_texture.height() as f32) / 2.0,
         );
+        let ball_texture = Texture::new(ctx, "./resources/ball.png")?;
+        let ball_position = Vec2::new(
+            WINDOW_WIDTH / 2.0 - ball_texture.width() as f32 / 2.0,
+            WINDOW_HEIGHT / 2.0 - ball_texture.height() as f32 / 2.0,
+        );
         Ok(GameState {
             player1: Entity::new(player1_texture, player1_position),
             player2: Entity::new(player2_texture, player2_position),
+            ball: Entity::new(ball_texture, ball_position),
         })
     }
 }
@@ -45,6 +53,7 @@ impl State for GameState {
         graphics::clear(ctx, Color::rgb(0.392, 0.584, 0.929));
         self.player1.texture.draw(ctx, self.player1.position);
         self.player2.texture.draw(ctx, self.player2.position);
+        self.ball.texture.draw(ctx, self.ball.position);
         Ok(())
     }
     fn update(&mut self, ctx: &mut Context) -> tetra::Result {
