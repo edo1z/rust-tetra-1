@@ -8,6 +8,8 @@ const WINDOW_WIDTH: f32 = 640.0;
 const WINDOW_HEIGHT: f32 = 480.0;
 const PADDLE_SPEED: f32 = 8.0;
 const BALL_SPEED: f32 = 5.0;
+const PADDLE_SPIN: f32 = 4.0;
+const BALL_ACC: f32 = 0.05;
 
 struct GameState {
     player1: Entity,
@@ -70,6 +72,12 @@ impl Entity {
             self.height(),
         )
     }
+    fn center(&self) -> Vec2<f32> {
+        Vec2::new(
+            self.position.x + (self.width() / 2.0),
+            self.position.y + (self.width() / 2.0),
+        )
+    }
 }
 
 impl State for GameState {
@@ -104,8 +112,15 @@ impl State for GameState {
         } else {
             None
         };
-        if paddle_hit.is_some() {
-            self.ball.velocity.x = -self.ball.velocity.x;
+        if let Some(paddle) = paddle_hit {
+            self.ball.velocity.x =
+                -(self.ball.velocity.x + (BALL_ACC * self.ball.velocity.x.signum()));
+            let offset = (paddle.center().y - self.ball.center().y) / paddle.height();
+            self.ball.velocity.y += PADDLE_SPIN * -offset;
+        }
+        if self.ball.position.y <= 0.0 || self.ball.position.y + self.ball.height() >= WINDOW_HEIGHT
+        {
+            self.ball.velocity.y *= -1.0;
         }
         Ok(())
     }
