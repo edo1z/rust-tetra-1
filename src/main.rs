@@ -1,4 +1,8 @@
-use tetra::graphics::{self, Color, Rectangle, Texture};
+use tetra::graphics::{
+    self,
+    text::{Font, Text},
+    Color, Rectangle, Texture,
+};
 use tetra::input::{self, Key};
 use tetra::math::Vec2;
 use tetra::window;
@@ -10,11 +14,13 @@ const PADDLE_SPEED: f32 = 8.0;
 const BALL_SPEED: f32 = 5.0;
 const PADDLE_SPIN: f32 = 4.0;
 const BALL_ACC: f32 = 0.05;
+const TEXT_OFFSET: Vec2<f32> = Vec2::new(16.0, 16.0);
 
 struct GameState {
     player1: Entity,
     player2: Entity,
     ball: Entity,
+    title: Text,
 }
 impl GameState {
     fn new(ctx: &mut Context) -> tetra::Result<GameState> {
@@ -34,10 +40,13 @@ impl GameState {
             WINDOW_HEIGHT / 2.0 - ball_texture.height() as f32 / 2.0,
         );
         let ball_velocity = Vec2::new(-BALL_SPEED, 0.0);
+        let font = Font::bmfont(ctx, "./resources/DejaVuSansMono.fnt")?;
+        let title = Text::new("PONG", font);
         Ok(GameState {
             player1: Entity::new(player1_texture, player1_position),
             player2: Entity::new(player2_texture, player2_position),
             ball: Entity::with_velocity(ball_texture, ball_position, ball_velocity),
+            title,
         })
     }
 }
@@ -86,6 +95,7 @@ impl State for GameState {
         self.player1.texture.draw(ctx, self.player1.position);
         self.player2.texture.draw(ctx, self.player2.position);
         self.ball.texture.draw(ctx, self.ball.position);
+        self.title.draw(ctx, TEXT_OFFSET + Vec2::new(0.0, 128.0));
         Ok(())
     }
     fn update(&mut self, ctx: &mut Context) -> tetra::Result {
