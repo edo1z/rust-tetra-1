@@ -54,6 +54,12 @@ impl State for GameState {
         if input::is_key_down(ctx, Key::S) {
             self.player1.position.y += PADDLE_SPEED;
         }
+        if input::is_key_down(ctx, Key::Up) {
+            self.player2.position.y -= PADDLE_SPEED;
+        }
+        if input::is_key_down(ctx, Key::Down) {
+            self.player2.position.y += PADDLE_SPEED;
+        }
         Ok(())
     }
 }
