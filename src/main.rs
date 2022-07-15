@@ -122,6 +122,14 @@ impl State for GameState {
         {
             self.ball.velocity.y *= -1.0;
         }
+        if self.ball.position.x < 0.0 {
+            window::quit(ctx);
+            println!("Player2 wins!");
+        }
+        if self.ball.position.x > WINDOW_WIDTH {
+            window::quit(ctx);
+            println!("Player1 wins!");
+        }
         Ok(())
     }
 }
